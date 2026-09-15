@@ -8,39 +8,35 @@ const inpName = document.getElementById(
 const inpCategory = document.getElementById(
   "inp-category",
 ) as HTMLSelectElement | null;
-const inptime = document.getElementById(
+const inpTime = document.getElementById(
   "inp-time",
-) as HTMLInputElement | null;const inpDesc = document.getElementById(
+) as HTMLInputElement | null;
+const inpDesc = document.getElementById(
   "inp-desc",
 ) as HTMLTextAreaElement | null;
 
 const mainRecipeList = new RecipeList();
 
-if (btnAdd && inpName && inpCategory && inpDesc) {
-const inptime = document.getElementById(
-  "inp-time",
-) as HTMLInputElement | null;
-const mainRecipeList = new RecipeList();
-
-if (btnAdd && inpName && inpCategory && inptime) {
+if (btnAdd && inpName && inpCategory && inpDesc && inpTime) {
   btnAdd.addEventListener("click", () => {
     const recipesErrorContainer = document.getElementById("add-recipes-error");
-    if(!inptime.checkValidity()) {
-      inptime.reportValidity();
-      return
-    }
     const recipesError = document.getElementById("add-recipes-error-msg");
+
+    if (!inpTime.checkValidity()) {
+      inpTime.reportValidity();
+      return;
+    }
+
     try {
       const newRecipe = new Recipe(inpName.value);
       newRecipe.category = inpCategory.value;
       newRecipe.desc = inpDesc.value;
+      newRecipe.time = inpTime.valueAsNumber;
+
       mainRecipeList.add(newRecipe);
-      clearInputs(inpName, inpCategory, inpDesc);
-      newRecipe.time = inptime.value;
-      mainRecipeList.add(newRecipe);
-      clearInputs(inpName, inpCategory, inptime);
+      clearInputs(inpName, inpCategory, inpDesc, inpTime);
       recipesErrorContainer?.classList.add("d-none");
-      RecipeList(newRecipe);
+      loadRecipeList(newRecipe);
       appendAlert(`${newRecipe.name} agregada correctamente!`, "success");
     } catch (error) {
       recipesErrorContainer?.classList.remove("d-none");
@@ -59,15 +55,12 @@ function clearInputs(
   inpNameEl: HTMLInputElement,
   inpCategoryEl: HTMLSelectElement,
   inpDescEl: HTMLTextAreaElement,
+  inpTimeEl: HTMLInputElement,
 ) {
   inpNameEl.value = "";
   inpCategoryEl.selectedIndex = 0;
-  inpDescEl.value= "";
-  inptimeEl: HTMLInputElement,
-) {
-  inpNameEl.value = "";
-  inpCategoryEl.selectedIndex = 0;
-  inptimeEl.value = "0";
+  inpDescEl.value = "";
+  inpTimeEl.value = "";
 }
 
 function loadRecipeList(newRecipe: Recipe) {
